@@ -1,8 +1,26 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+  HttpException,
+  HttpStatus,
+  UseFilters,
+  ForbiddenException,
+  Query,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { CustomForbiddenException } from 'src/exception/custom-forbidden.exception';
+import { HttpExceptionFilter } from 'src/exception/exception-filter.exception';
 
+// controller leven exception filter
+// @UseFilters(HttpExceptionFilter)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
@@ -11,9 +29,14 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
-
+  // method leven filters
+  // @UseFilters(HttpExceptionFilter)
   @Get()
   findAll() {
+    // throw new CustomForbiddenException();
+    // throw new ForbiddenException();
+    // console.log(id);
+
     return this.usersService.findAll();
   }
 
@@ -29,6 +52,13 @@ export class UsersController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    // return this.usersService.remove(+id);
+    // throw new HttpException(
+    //   {
+    //     status: HttpStatus.FORBIDDEN,
+    //     error: 'this route is not public',
+    //   },
+    //   HttpStatus.FORBIDDEN,
+    // );
   }
 }
