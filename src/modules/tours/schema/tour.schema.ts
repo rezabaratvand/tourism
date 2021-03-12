@@ -8,12 +8,12 @@ export type TourDocument = Tour & Document;
 @Schema({ versionKey: false, timestamps: true })
 export class Tour {
   @Prop({ type: String, required: true, minlength: 3, maxlength: 255 })
-  tour: string;
+  title: string;
 
   @Prop({ type: String, required: true, minlength: 3, maxlength: 2048 })
   description: string;
 
-  @Prop({ type: [Date] })
+  @Prop({ type: [Date], required: true })
   startDates: Array<Date>;
 
   @Prop({ type: Number, required: true })
@@ -34,7 +34,6 @@ export class Tour {
     min: 1,
     max: 5,
     set: rate => Math.round(rate * 10) / 10,
-    required: true,
   })
   ratingAverage: number;
 
@@ -48,7 +47,7 @@ export class Tour {
     description: String,
     address: String,
   })
-  startLocation: Object;
+  startLocation: object;
 
   @Prop(
     raw([
@@ -61,7 +60,7 @@ export class Tour {
       },
     ]),
   )
-  locations: Object;
+  locations: Array<object>;
 
   // guid: User
 }
