@@ -9,11 +9,11 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
   imports: [
-    UsersModule,
+    // UsersModule,
     ToursModule,
     MongooseModule.forRootAsync({
       useFactory: async () => ({
-        uri: process.env.MONGO_URI,
+        uri: 'mongodb://localhost:27017/tourism',
         connectionName: 'tourism',
         useCreateIndex: true,
         useNewUrlParser: true,

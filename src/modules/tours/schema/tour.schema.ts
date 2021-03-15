@@ -37,7 +37,7 @@ export class Tour {
   })
   ratingAverage: number;
 
-  @Prop({ type: Number, required: true })
+  @Prop({ type: Number })
   ratingsQuantity: number;
 
   // geo property

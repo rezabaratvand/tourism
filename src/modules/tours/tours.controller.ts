@@ -18,6 +18,7 @@ import {
   ApiOperation,
   ApiOkResponse,
   ApiCreatedResponse,
+  ApiParam,
 } from '@nestjs/swagger';
 
 @ApiTags('tours')
@@ -42,6 +43,7 @@ export class ToursController {
   }
 
   @Get(':id')
+  @ApiParam({ name: 'id' })
   @ApiOperation({ summary: 'get a tour by id' })
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
@@ -50,6 +52,7 @@ export class ToursController {
   }
 
   @Patch(':id')
+  @ApiParam({ name: 'id' })
   @ApiOperation({ summary: 'update a tour by id' })
   @ApiCreatedResponse()
   @HttpCode(HttpStatus.CREATED)
@@ -61,6 +64,7 @@ export class ToursController {
   }
 
   @Delete(':id')
+  @ApiParam({ name: 'id' })
   @ApiOperation({ summary: 'delete a tour by id' })
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)

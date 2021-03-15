@@ -14,10 +14,12 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger';
 import difficultyConst from 'src/common/constants/difficulty.const';
+import { Tour } from '../schema/tour.schema';
 export class CreateTourDto {
   @ApiProperty({
     name: 'title',
     description: 'tour title',
+    example: 'The Landmark Tour',
     type: String,
     minLength: 3,
     maxLength: 255,
@@ -31,6 +33,7 @@ export class CreateTourDto {
 
   @ApiProperty({
     name: 'description',
+    example: 'The Landmark Tour',
     description: 'tour description',
     type: String,
     minLength: 3,
@@ -46,7 +49,7 @@ export class CreateTourDto {
   @ApiProperty({
     name: 'startDates',
     description: 'tour start dates',
-    type: Array,
+    type: [Date],
     required: true,
   })
   @IsArray()
@@ -56,7 +59,8 @@ export class CreateTourDto {
   @ApiProperty({
     name: 'duration',
     description: 'tour duration',
-    type: String,
+    example: 25,
+    type: Number,
     required: true,
   })
   @IsNumber()
@@ -66,6 +70,7 @@ export class CreateTourDto {
   @ApiProperty({
     name: 'maxGroupSize',
     description: 'maxGroupSize of each tour',
+    example: 40,
     type: Number,
     required: true,
   })
@@ -76,6 +81,8 @@ export class CreateTourDto {
   @ApiProperty({
     name: 'difficulty',
     description: 'tour difficulty',
+    enum: Object.values(difficultyConst),
+    enumName: 'difficulty',
     type: String,
     required: true,
   })
@@ -86,6 +93,7 @@ export class CreateTourDto {
   @ApiProperty({
     name: 'price',
     description: 'tour price',
+    example: 780,
     type: Number,
     required: true,
   })
@@ -93,49 +101,64 @@ export class CreateTourDto {
   @IsNotEmpty()
   price: number;
 
-  @ApiProperty({
-    name: 'ratingAverage',
-    description: 'tour ratingAverage',
-    type: Number,
-    minimum: 1,
-    maximum: 5,
-    default: 4.5,
-  })
-  @IsNumber()
-  @IsOptional()
-  @Min(1)
-  @Max(5)
-  ratingAverage?: number;
+  // @ApiProperty({
+  //   name: 'ratingAverage',
+  //   description: 'tour ratingAverage',
+  //   type: Number,
+  //   minimum: 1,
+  //   maximum: 5,
+  //   default: 4.5,
+  // })
+  // @IsNumber()
+  // @IsOptional()
+  // @Min(1)
+  // @Max(5)
+  // ratingAverage?: number;
 
-  @ApiProperty({
-    name: 'ratingsQuantity',
-    description: 'tour ratingsQuantity',
-    type: Number,
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  ratingsQuantity: number;
+  // @ApiProperty({
+  //   name: 'ratingsQuantity',
+  //   description: 'tour ratingsQuantity',
+  //   type: Number,
+  //   required: true,
+  // })
+  // @IsNumber()
+  // @IsNotEmpty()
+  // ratingsQuantity: number;
 
   // geo properties
   @ApiProperty({
     name: 'startLocation',
     description: 'tour startLocation',
+    example: {
+      description: 'Miami, USA',
+      type: 'Point',
+      coordinates: [-80.185942, 25.774772],
+      address: '301 Biscayne Blvd, Miami, FL 33132, USA',
+    },
     type: Object,
     required: true,
   })
-  @IsNumber()
+  @IsArray()
   @IsNotEmpty()
   startLocation: object;
 
   @ApiProperty({
     name: 'locations',
     description: 'tour locations',
+    example: [
+      {
+        description: 'Miami, USA',
+        type: 'Point',
+        coordinates: [-80.185942, 25.774772],
+        address: '301 Biscayne Blvd, Miami, FL 33132, USA',
+        day: 10,
+      },
+    ],
     type: Array,
   })
-  @IsNumber()
+  @IsArray()
   @IsOptional()
-  locations: Array<object>;
+  locations: [object];
 
   // @ApiProperty({
   //   name: 'guid',
