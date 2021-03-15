@@ -9,10 +9,6 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ToursService } from './tours.service';
-import { CreateTourDto } from './dto/create-tour.dto';
-import { UpdateTourDto } from './dto/update-tour.dto';
-import { MongoIdDto } from 'src/common/dto/mongoId.dto';
 import {
   ApiTags,
   ApiOperation,
@@ -20,6 +16,10 @@ import {
   ApiCreatedResponse,
   ApiParam,
 } from '@nestjs/swagger';
+import { ToursService } from './tours.service';
+import { CreateTourDto } from './dto/create-tour.dto';
+import { UpdateTourDto } from './dto/update-tour.dto';
+import { MongoIdDto } from 'src/common/dto/mongoId.dto';
 
 @ApiTags('tours')
 @Controller('tours')

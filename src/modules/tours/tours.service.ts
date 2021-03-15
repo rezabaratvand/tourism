@@ -25,7 +25,7 @@ export class ToursService {
   async findOne(mongoIdDto: MongoIdDto): Promise<TourDocument> {
     const tour = await this.tourModel.findById(mongoIdDto.id);
 
-    if (tour) throw new NotFoundException('tour not found');
+    if (!tour) throw new NotFoundException('tour not found');
 
     return tour;
   }

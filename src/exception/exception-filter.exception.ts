@@ -14,7 +14,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const request = ctx.getRequest<Request>();
     const response = ctx.getResponse<Response>();
-    // const status = exception.getStatus();
+
+    // to get message from response
+    const exc: any = exception;
+
     const status =
       exception instanceof HttpException
         ? exception.getStatus()
@@ -23,7 +26,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json({
       statusCode: status,
       timeStamp: new Date().toISOString(),
-      path: request.url,
+      message:
+        exception instanceof HttpException
+          ? exc?.response?.message?.[0]
+          : 'something failed',
     });
   }
 }
