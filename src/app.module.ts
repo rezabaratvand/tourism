@@ -2,10 +2,11 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { HttpExceptionFilter } from './exception/exception-filter.exception';
 import { ToursModule } from './modules/tours/tours.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -19,6 +20,13 @@ import { MongooseModule } from '@nestjs/mongoose';
         useNewUrlParser: true,
       }),
     }),
+    // throttler module
+    ThrottlerModule.forRootAsync({
+      useFactory: () => ({
+        ttl: 60,
+        limit: 30,
+      }),
+    }),
   ],
   controllers: [AppController],
   providers: [
@@ -27,6 +35,11 @@ import { MongooseModule } from '@nestjs/mongoose';
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
+    },
+    // throttler binding
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
     },
   ],
 })
