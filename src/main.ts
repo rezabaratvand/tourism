@@ -3,10 +3,15 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
+import * as helmet from 'helmet';
 // import { HttpExceptionFilter } from './exception/exception-filter.exception';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // helmet middleware
+  app.use(helmet());
+
   // global exception filter
   // app.useGlobalFilters(new HttpExceptionFilter());
 
