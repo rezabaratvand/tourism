@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import * as compression from 'compression';
 // import { HttpExceptionFilter } from './exception/exception-filter.exception';
 
 async function bootstrap() {
@@ -26,6 +27,9 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
+
+  // apply compression middleware
+  app.use(compression());
 
   await app.listen(3000);
 }
