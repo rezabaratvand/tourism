@@ -7,6 +7,7 @@ import { HttpExceptionFilter } from './exception/exception-filter.exception';
 import { ToursModule } from './modules/tours/tours.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
         limit: 30,
       }),
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
