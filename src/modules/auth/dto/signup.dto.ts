@@ -6,9 +6,9 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { User } from '../schema/user.schema';
+import { User } from 'src/modules/users/schema/user.schema';
 
-export class CreateUserDto implements Partial<User> {
+export class SignupDto implements Partial<User> {
   @IsNotEmpty()
   @IsString()
   @MinLength(5)

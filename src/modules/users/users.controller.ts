@@ -18,6 +18,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CustomForbiddenException } from 'src/exception/custom-forbidden.exception';
 import { HttpExceptionFilter } from 'src/exception/exception-filter.exception';
+import { MongoIdDto } from 'src/common/dto/mongoId.dto';
 
 // controller leven exception filter
 // @UseFilters(HttpExceptionFilter)
@@ -41,8 +42,8 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findOne(@Param() mongoId: MongoIdDto) {
+    return this.usersService.findOne(mongoId);
   }
 
   @Put(':id')
