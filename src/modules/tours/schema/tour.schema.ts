@@ -1,4 +1,3 @@
-import * as mongoose from 'mongoose';
 import { Document } from 'mongoose';
 import { Schema, Prop, raw, SchemaFactory } from '@nestjs/mongoose';
 import difficultyConst from '../../../common/constants/difficulty.const';

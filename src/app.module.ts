@@ -8,6 +8,7 @@ import { ToursModule } from './modules/tours/tours.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
   imports: [
@@ -29,6 +30,8 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
     }),
     AuthModule,
+    // call register method on config module
+    // ConfigModule.register({ folder: './config' }),
   ],
   controllers: [AppController],
   providers: [

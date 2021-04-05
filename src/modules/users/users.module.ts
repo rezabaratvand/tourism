@@ -8,8 +8,21 @@ import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { LoggerMiddleware } from '../../middleware/class-base.middleware';
 import { newLogger } from 'src/middleware/function-base.middleware';
+import { MongooseModule } from '@nestjs/mongoose';
+import { User, UserSchema } from './schema/user.schema';
 
 @Module({
+  imports: [
+    MongooseModule.forFeatureAsync([
+      {
+        name: User.name,
+        useFactory: () => {
+          const schema = UserSchema;
+          return schema;
+        },
+      },
+    ]),
+  ],
   controllers: [UsersController],
   providers: [UsersService],
 })

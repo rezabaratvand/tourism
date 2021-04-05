@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import * as compression from 'compression';
 import * as helmet from 'helmet';
 import * as csurf from 'csurf';
@@ -40,6 +40,9 @@ async function bootstrap() {
   // apply compression middleware
   app.use(compression());
 
-  await app.listen(3000);
+  const port = process.env.PORT || 3000;
+
+  await app.listen(port);
+  Logger.verbose(`application is running on: ${await app.getUrl()}`);
 }
 bootstrap();
