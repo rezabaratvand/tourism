@@ -9,6 +9,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '../config/config.module';
+import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -41,10 +42,15 @@ import { ConfigModule } from '../config/config.module';
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    // throttler binding
+    // // throttler binding
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    // set jwt guard as global
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
     },
   ],
 })

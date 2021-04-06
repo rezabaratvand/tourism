@@ -15,6 +15,7 @@ import {
   ApiOkResponse,
   ApiCreatedResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
@@ -22,6 +23,7 @@ import { UpdateTourDto } from './dto/update-tour.dto';
 import { MongoIdDto } from 'src/common/dto/mongoId.dto';
 
 @ApiTags('tours')
+@ApiBearerAuth()
 @Controller('tours')
 export class ToursController {
   constructor(private readonly toursService: ToursService) {}
@@ -56,10 +58,7 @@ export class ToursController {
   @ApiOperation({ summary: 'update a tour by id' })
   @ApiCreatedResponse()
   @HttpCode(HttpStatus.CREATED)
-  async update(
-    @Param() mongoIdDto: MongoIdDto,
-    @Body() updateTourDto: UpdateTourDto,
-  ) {
+  async update(@Param() mongoIdDto: MongoIdDto, @Body() updateTourDto: UpdateTourDto) {
     return await this.toursService.update(mongoIdDto, updateTourDto);
   }
 
