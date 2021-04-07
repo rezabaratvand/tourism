@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../users/schema/user.schema';
-import { JwtPayload } from './jwt-payload.interfaces';
+import { JwtPayload } from './interfaces/jwt-payload.interfaces';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 import globalConst from 'src/common/constants/global.const';
