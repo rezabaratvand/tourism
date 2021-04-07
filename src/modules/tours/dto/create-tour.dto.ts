@@ -13,7 +13,7 @@ import {
 } from 'class-validator';
 
 import { ApiProperty } from '@nestjs/swagger';
-import difficultyConst from 'src/common/constants/difficulty.const';
+import difficultyConst from 'src/modules/tours/constants/difficulty.const';
 import { Tour } from '../schema/tour.schema';
 export class CreateTourDto implements Partial<Tour> {
   @ApiProperty({

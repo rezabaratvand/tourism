@@ -19,9 +19,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { CustomForbiddenException } from 'src/exception/custom-forbidden.exception';
 import { HttpExceptionFilter } from 'src/exception/exception-filter.exception';
 import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import { ApiTags } from '@nestjs/swagger';
 
 // controller leven exception filter
 // @UseFilters(HttpExceptionFilter)
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

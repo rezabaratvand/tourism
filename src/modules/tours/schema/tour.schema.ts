@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 import { Schema, Prop, raw, SchemaFactory } from '@nestjs/mongoose';
-import difficultyConst from '../../../common/constants/difficulty.const';
+import difficultyConst from '../constants/difficulty.const';
 
 export type TourDocument = Tour & Document;
 

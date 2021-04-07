@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '../config/config.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { DataGeneratorModule } from './data-generator/data-generator.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
       }),
     }),
     AuthModule,
+    DataGeneratorModule,
     // call register method on config module
     // ConfigModule.register({ folder: './config' }),
   ],

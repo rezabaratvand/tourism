@@ -19,13 +19,13 @@ export class User {
   phoneNumber: string;
 
   @Prop({ type: Boolean, default: false })
-  verified: boolean;
+  verified?: boolean;
 
   @Prop({ type: Number, length: 6 })
-  verificationCode: number;
+  verificationCode?: number;
 
   @Prop({ type: Date })
-  verificationExpiration: Date;
+  verificationExpiration?: Date;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
