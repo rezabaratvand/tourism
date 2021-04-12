@@ -22,6 +22,7 @@ import { Request } from 'express';
 import { ForgotPassword, ForgotPasswordDocument } from './schema/forgot-password.schema';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ChangePasswordDto } from './dto/change-my-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -181,6 +182,31 @@ export class AuthService {
 
     return await this.generateTokens(request, user._id);
   }
+
+  //! CHANGE MY PASSWORD
+  async changeMyPassword(
+    changePasswordDto: ChangePasswordDto,
+    request: Request,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { previousPassword, newPassword } = changePasswordDto;
+
+    // find user
+    let user: any = request.user;
+    user = await this.userModel.findById(user._id).select('+password');
+    if (!user) throw new NotFoundException('user not found');
+
+    // validate previous password
+    if (!(await user.validatePassword(previousPassword)))
+      throw new BadRequestException('The previous password is incorrect');
+
+    // change the password
+    user.password = newPassword;
+    await user.save();
+
+    // return access token and refresh access token
+    return await this.generateTokens(request, user._id);
+  }
+
   /**
    **PRIVATE METHODS
    */

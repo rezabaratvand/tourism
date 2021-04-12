@@ -9,10 +9,11 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { PublicRoute } from './decorators/public-route.decorator';
+import { ChangePasswordDto } from './dto/change-my-password.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -86,5 +87,15 @@ export class AuthController {
     @Req() request: Request,
   ): Promise<{ accessToken: string; refreshToken: string }> {
     return await this.authService.resetPassword(resetPasswordDto, request);
+  }
+
+  @Post('change-my-password')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'change my password' })
+  async changeMyPassword(
+    @Body() changePasswordDto: ChangePasswordDto,
+    @Req() request: Request,
+  ) {
+    return await this.authService.changeMyPassword(changePasswordDto, request);
   }
 }
