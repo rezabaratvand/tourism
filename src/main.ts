@@ -22,7 +22,7 @@ async function bootstrap() {
   // use global pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      disableErrorMessages: true ? process.env.NODE_ENV == 'production' : false,
+      disableErrorMessages: process.env.NODE_ENV == 'development' ? true : false,
     }),
   );
 
