@@ -13,6 +13,7 @@ import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { PublicRoute } from './decorators/public-route.decorator';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
@@ -57,5 +58,15 @@ export class AuthController {
     @Body() refreshTokenDto: RefreshTokenDto,
   ): Promise<{ accessToken: string }> {
     return await this.authService.refreshToken(refreshTokenDto);
+  }
+
+  @PublicRoute()
+  @Post('forgot-password')
+  @ApiOperation({ summary: 'send forgot password request' })
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+    @Req() request: Request,
+  ): Promise<{ forgotPasswordToken: number }> {
+    return await this.authService.forgotPassword(forgotPasswordDto, request);
   }
 }

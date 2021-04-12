@@ -4,7 +4,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { addHours } from 'date-fns';
+import { addHours, addMinutes } from 'date-fns';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,12 +19,16 @@ import { RefreshToken, RefreshTokenDocument } from './schema/refresh-token.schem
 import { v4 as uuidv4 } from 'uuid';
 import { getClientIp } from 'request-ip';
 import { Request } from 'express';
+import { ForgotPassword, ForgotPasswordDocument } from './schema/forgot-password.schema';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    @InjectModel(ForgotPassword.name)
+    private readonly forgotPasswordModel: Model<ForgotPasswordDocument>,
     @InjectModel(RefreshToken.name)
     private readonly refreshTokenModel: Model<RefreshTokenDocument>,
   ) {}
@@ -110,9 +114,37 @@ export class AuthService {
     return { accessToken: await this.singToken(user._id) };
   }
 
+  //! FORGOT PASSWORD
+  async forgotPassword(
+    forgotPasswordDto: ForgotPasswordDto,
+    request: Request,
+  ): Promise<{ forgotPasswordToken: number }> {
+    const { phoneNumber, username } = forgotPasswordDto;
+
+    // find user with the given phoneNumber
+    const filter = { verified: true, phoneNumber, username };
+    const user = await this.findUser(filter);
+
+    // create new forgotPassword instance
+    const forgotPasswordToken = await this.createForgotPassword(user._id, request);
+
+    // return forgotPasswordToken
+    return { forgotPasswordToken };
+  }
+
   /**
    **PRIVATE METHODS
    */
+
+  //! FIND USER BY FILTER
+  private async findUser<T extends object>(filter: T): Promise<UserDocument> {
+    const user = await this.userModel.findOne(filter).select('+password +verified');
+
+    if (!user) throw new NotFoundException('user not found');
+
+    return user;
+  }
+
   //! SET VERIFICATION INFO
   private async setVerifyInfo(user: UserDocument): Promise<void> {
     user.verificationCode = this.generateRandomToken();
@@ -122,18 +154,6 @@ export class AuthService {
     );
 
     await user.save();
-  }
-
-  //! GENERATE JWT
-  private async singToken(userId: UserDocument): Promise<string> {
-    const payload: JwtPayload = { id: userId };
-
-    return await this.jwtService.signAsync(payload);
-  }
-
-  //! GENERATE 6-DIGIT RANDOM NUMBER
-  private generateRandomToken(): number {
-    return Math.floor(100000 + Math.random() * 900000);
   }
 
   //! GENERATE REFRESH ACCESS TOKEN
@@ -150,11 +170,40 @@ export class AuthService {
     return refreshToken.refreshToken;
   }
 
+  //! CREATE FORGOT PASSWORD INSTANCE
+  private async createForgotPassword(
+    user: UserDocument,
+    request: Request,
+  ): Promise<number> {
+    const forgotPassword = await this.forgotPasswordModel.create({
+      user,
+      token: this.generateRandomToken(),
+      expiration: addMinutes(Date.now(), 30),
+      ip: getClientIp(request),
+      agent: request.headers['user-agent'] || 'xxxx',
+      used: false,
+    });
+
+    return forgotPassword.token;
+  }
+
   //! RETURN ACCESS TOKEN AND REFRESH ACCESS TOKEN
   private async generateTokens(request: Request, userId: UserDocument) {
     return {
       accessToken: await this.singToken(userId),
       refreshToken: await this.generateRefreshToken(request, userId),
     };
+  }
+
+  //! GENERATE JWT
+  private async singToken(userId: UserDocument): Promise<string> {
+    const payload: JwtPayload = { id: userId };
+
+    return await this.jwtService.signAsync(payload);
+  }
+
+  //! GENERATE 6-DIGIT RANDOM NUMBER
+  private generateRandomToken(): number {
+    return Math.floor(100000 + Math.random() * 900000);
   }
 }
