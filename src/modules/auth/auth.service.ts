@@ -21,6 +21,7 @@ import { getClientIp } from 'request-ip';
 import { Request } from 'express';
 import { ForgotPassword, ForgotPasswordDocument } from './schema/forgot-password.schema';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -131,6 +132,7 @@ export class AuthService {
     // return forgotPasswordToken
     return { forgotPasswordToken };
   }
+
   //! VERIFY FORGOT PASSWORD
   async verifyForgotPassword(verifyUserDto: VerifyUserDto) {
     const { token, phoneNumber } = verifyUserDto;
@@ -159,6 +161,26 @@ export class AuthService {
     return 'please change your password';
   }
 
+  //! RESET PASSWORD
+  async resetPassword(
+    resetPasswordDto: ResetPasswordDto,
+    request: Request,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    const { password, phoneNumber } = resetPasswordDto;
+
+    // find user
+    const user = await this.findUser({ verified: true, phoneNumber });
+
+    // validate forgot password instance
+    const filter = { user: user._id, used: true, expiration: { $gt: new Date() } };
+    await this.validateForgotPassword(filter, 'please verify again');
+
+    // change password
+    user.password = password;
+    await user.save();
+
+    return await this.generateTokens(request, user._id);
+  }
   /**
    **PRIVATE METHODS
    */

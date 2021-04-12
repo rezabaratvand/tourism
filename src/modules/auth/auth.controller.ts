@@ -15,6 +15,7 @@ import { AuthService } from './auth.service';
 import { PublicRoute } from './decorators/public-route.decorator';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
@@ -75,5 +76,15 @@ export class AuthController {
   @ApiOperation({ summary: 'verify forgot password' })
   async verifyForgotPassword(@Body() verifyUserDto: VerifyUserDto): Promise<string> {
     return await this.authService.verifyForgotPassword(verifyUserDto);
+  }
+
+  @PublicRoute()
+  @Post('reset-password')
+  @ApiOperation({ summary: 'reset password' })
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+    @Req() request: Request,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    return await this.authService.resetPassword(resetPasswordDto, request);
   }
 }
