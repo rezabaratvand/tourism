@@ -131,6 +131,33 @@ export class AuthService {
     // return forgotPasswordToken
     return { forgotPasswordToken };
   }
+  //! VERIFY FORGOT PASSWORD
+  async verifyForgotPassword(verifyUserDto: VerifyUserDto) {
+    const { token, phoneNumber } = verifyUserDto;
+
+    // find user
+    const userFilter = { verified: true, phoneNumber };
+    const user = await this.findUser(userFilter);
+
+    // validate verification token
+    const verifyFilter = {
+      user: user._id,
+      expiration: { $gt: new Date() },
+      used: false,
+      token,
+    };
+
+    const forgotPassword = await this.validateForgotPassword(
+      verifyFilter,
+      'verify token is invalid',
+    );
+
+    // set forgot password as used
+    await this.setForgotPasswordAsUsed(forgotPassword);
+
+    // return success message
+    return 'please change your password';
+  }
 
   /**
    **PRIVATE METHODS
@@ -185,6 +212,25 @@ export class AuthService {
     });
 
     return forgotPassword.token;
+  }
+
+  //! VALIDATE FORGOT PASSWORD
+  private async validateForgotPassword<T extends object, U extends string>(
+    filter: T,
+    message: U,
+  ) {
+    const result = await this.forgotPasswordModel.findOne(filter);
+    if (!result) throw new BadRequestException(message);
+
+    return result;
+  }
+
+  //! SET FORGOT PASSWORD AS USED
+  private async setForgotPasswordAsUsed(
+    forgotPassword: ForgotPasswordDocument,
+  ): Promise<void> {
+    forgotPassword.used = true;
+    await forgotPassword.save();
   }
 
   //! RETURN ACCESS TOKEN AND REFRESH ACCESS TOKEN

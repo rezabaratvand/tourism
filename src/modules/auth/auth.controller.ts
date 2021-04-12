@@ -69,4 +69,11 @@ export class AuthController {
   ): Promise<{ forgotPasswordToken: number }> {
     return await this.authService.forgotPassword(forgotPasswordDto, request);
   }
+
+  @PublicRoute()
+  @Post('verify-forgot-password')
+  @ApiOperation({ summary: 'verify forgot password' })
+  async verifyForgotPassword(@Body() verifyUserDto: VerifyUserDto): Promise<string> {
+    return await this.authService.verifyForgotPassword(verifyUserDto);
+  }
 }
