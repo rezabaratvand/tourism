@@ -8,6 +8,7 @@ import { UsersModule } from '../users/users.module';
 import jwtConstant from './constants/auth.constants';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from '../users/schema/user.schema';
+import { RefreshToken, RefreshTokenSchema } from './schema/refresh-token.schema';
 
 @Module({
   imports: [
@@ -28,6 +29,13 @@ import { User, UserSchema } from '../users/schema/user.schema';
         name: User.name,
         useFactory: () => {
           const schema = UserSchema;
+          return schema;
+        },
+      },
+      {
+        name: RefreshToken.name,
+        useFactory: () => {
+          const schema = RefreshTokenSchema;
           return schema;
         },
       },

@@ -7,10 +7,13 @@ import {
   Param,
   Delete,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { PublicRoute } from './decorators/public-route.decorator';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
 import { VerifyUserDto } from './dto/verify-user.dto';
@@ -23,8 +26,11 @@ export class AuthController {
   @PublicRoute()
   @ApiOperation({ summary: 'login with username and password' })
   @Post('signin')
-  async signin(@Body() signinDto: SigninDto): Promise<{ accessToken: string }> {
-    return await this.authService.signin(signinDto);
+  async signin(
+    @Body() signinDto: SigninDto,
+    @Req() request: Request,
+  ): Promise<{ accessToken: string }> {
+    return await this.authService.signin(signinDto, request);
   }
 
   @PublicRoute()
@@ -39,7 +45,17 @@ export class AuthController {
   @Post('verify-user')
   async verifyUser(
     @Body() verifyUserDto: VerifyUserDto,
+    @Req() request: Request,
   ): Promise<{ accessToken: string }> {
-    return await this.authService.verifyUser(verifyUserDto);
+    return await this.authService.verifyUser(verifyUserDto, request);
+  }
+
+  @PublicRoute()
+  @Post('refresh-token')
+  @ApiOperation({ summary: 'refresh the access token' })
+  async refreshToken(
+    @Body() refreshTokenDto: RefreshTokenDto,
+  ): Promise<{ accessToken: string }> {
+    return await this.authService.refreshToken(refreshTokenDto);
   }
 }
