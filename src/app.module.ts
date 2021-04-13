@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
-import { APP_FILTER, APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { HttpExceptionFilter } from './exception/exception-filter.exception';
 import { ToursModule } from './modules/tours/tours.module';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -10,6 +10,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '../config/config.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
+import { DataTransformInterceptor } from './interceptors/data-transformer.interceptor';
 import { DataGeneratorModule } from './modules/data-generator/data-generator.module';
 import { HelperModule } from './modules/helper/helper.module';
 import * as paginatePlugin from 'mongoose-paginate-v2';
@@ -60,6 +61,11 @@ import * as paginatePlugin from 'mongoose-paginate-v2';
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
+    },
+    // data transformer interceptor
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: DataTransformInterceptor,
     },
   ],
 })
