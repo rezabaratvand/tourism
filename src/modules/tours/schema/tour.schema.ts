@@ -26,6 +26,9 @@ export class Tour {
   @Prop({ type: Number, required: true })
   maxGroupSize: number;
 
+  @Prop({ type: String, required: true })
+  image?: string;
+
   @Prop({ type: String, enum: Object.values(difficultyConst), required: true })
   difficulty: string;
 

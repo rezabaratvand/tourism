@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
-import { MongoIdDto } from 'src/common/dto/mongoId.dto';
 import { HelperService } from '../helper/helper.service';
 import { UserDocument } from '../users/schema/user.schema';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -11,6 +10,7 @@ import { ReplayCommentDto } from './dto/replay-comment.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
 import { Comment, CommentDocument } from '../comments/schema/comment.schema';
 import { Tour, TourDocument } from './schema/tour.schema';
+import { UploadTourImageDto } from './dto/upload-tour-image.dto';
 
 @Injectable()
 export class ToursService {
@@ -54,6 +54,14 @@ export class ToursService {
     await tour.deleteOne();
 
     return 'tour removed successfully';
+  }
+
+  async uploadTourImage(tourId: string, file: Express.Multer.File) {
+    const tour = await this.findOne(tourId);
+
+    await tour.updateOne({ image: file.filename });
+
+    return 'the image uploaded successfully';
   }
 
   //* COMMENT SECTION

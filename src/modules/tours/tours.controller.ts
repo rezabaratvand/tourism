@@ -9,6 +9,8 @@ import {
   HttpCode,
   HttpStatus,
   Query,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -17,6 +19,7 @@ import {
   ApiCreatedResponse,
   ApiParam,
   ApiBearerAuth,
+  ApiConsumes,
 } from '@nestjs/swagger';
 import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
@@ -29,6 +32,8 @@ import { GetUser } from 'src/common/decorators/get-user.decorator';
 import { UserDocument } from '../users/schema/user.schema';
 import { CommentDocument } from '../comments/schema/comment.schema';
 import { ReplayCommentDto } from './dto/replay-comment.dto';
+import { uploadSingleFile } from 'src/utils/upload-file.util';
+import { UploadTourImageDto } from './dto/upload-tour-image.dto';
 
 @ApiTags('tours')
 @ApiBearerAuth()
@@ -78,6 +83,18 @@ export class ToursController {
   @HttpCode(HttpStatus.OK)
   async remove(@Param() mongoIdDto: MongoIdDto) {
     return await this.toursService.remove(mongoIdDto.id);
+  }
+
+  @Patch('/upload-image/:id')
+  @ApiParam({ name: 'id' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(uploadSingleFile('image', 'uploads/tours'))
+  async uploadTourImage(
+    @Param() mongoIdDto: MongoIdDto,
+    @Body() uploadTourImageDto: UploadTourImageDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return await this.toursService.uploadTourImage(mongoIdDto.id, file);
   }
 
   //* COMMENT SECTION
