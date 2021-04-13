@@ -14,6 +14,7 @@ import { DataTransformInterceptor } from './interceptors/data-transformer.interc
 import { DataGeneratorModule } from './modules/data-generator/data-generator.module';
 import { HelperModule } from './modules/helper/helper.module';
 import { CommentsModule } from './modules/comments/comments.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
 import * as paginatePlugin from 'mongoose-paginate-v2';
 
 @Module({
@@ -43,6 +44,7 @@ import * as paginatePlugin from 'mongoose-paginate-v2';
     DataGeneratorModule,
     HelperModule,
     CommentsModule,
+    BookingsModule,
     // call register method on config module
     // ConfigModule.register({ folder: './config' }),
   ],
