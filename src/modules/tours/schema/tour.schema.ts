@@ -4,7 +4,12 @@ import difficultyConst from '../constants/difficulty.const';
 
 export type TourDocument = Tour & Document;
 
-@Schema({ versionKey: false, timestamps: true })
+@Schema({
+  versionKey: false,
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class Tour {
   @Prop({ type: String, required: true, minlength: 3, maxlength: 255 })
   title: string;
@@ -65,3 +70,10 @@ export class Tour {
 }
 
 export const TourSchema = SchemaFactory.createForClass(Tour);
+
+// virtual population
+TourSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'tour',
+});

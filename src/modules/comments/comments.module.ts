@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ToursService } from './tours.service';
-import { ToursController } from './tours.controller';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Tour, TourSchema } from './schema/tour.schema';
-import { Comment, CommentSchema } from '../comments/schema/comment.schema';
+import { Comment, CommentSchema } from './schema/comment.schema';
+import { Tour, TourSchema } from '../tours/schema/tour.schema';
+import { CommentsService } from './comments.service';
+import { CommentsController } from './comments.controller';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { Comment, CommentSchema } from '../comments/schema/comment.schema';
       },
     ]),
   ],
-  controllers: [ToursController],
-  providers: [ToursService],
+  providers: [CommentsService],
+  controllers: [CommentsController],
 })
-export class ToursModule {}
+export class CommentsModule {}

@@ -13,6 +13,7 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { DataTransformInterceptor } from './interceptors/data-transformer.interceptor';
 import { DataGeneratorModule } from './modules/data-generator/data-generator.module';
 import { HelperModule } from './modules/helper/helper.module';
+import { CommentsModule } from './modules/comments/comments.module';
 import * as paginatePlugin from 'mongoose-paginate-v2';
 
 @Module({
@@ -41,6 +42,7 @@ import * as paginatePlugin from 'mongoose-paginate-v2';
     AuthModule,
     DataGeneratorModule,
     HelperModule,
+    CommentsModule,
     // call register method on config module
     // ConfigModule.register({ folder: './config' }),
   ],
