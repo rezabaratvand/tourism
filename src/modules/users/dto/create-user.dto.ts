@@ -1,13 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsEmail,
+  IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsPhoneNumber,
   IsString,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import rolesConst from '../constants/roles.const';
 import { User } from '../schema/user.schema';
-
 export class CreateUserDto implements Partial<User> {
   @IsNotEmpty()
   @IsString()
@@ -51,6 +54,37 @@ export class CreateUserDto implements Partial<User> {
     required: true,
   })
   fullName: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  @ApiProperty({
+    name: 'email',
+    example: 'user@gmail.com',
+    type: String,
+    maxLength: 512,
+    required: true,
+  })
+  email: string;
+
+  @IsOptional()
+  @IsEnum(rolesConst)
+  @ApiProperty({
+    name: 'role',
+    example: 'admin',
+    enum: Object.values(rolesConst),
+    default: rolesConst.USER,
+  })
+  role?: string;
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty({
+    name: 'avatar',
+    description: 'avatar image',
+    format: 'binary',
+    required: false,
+  })
+  avatar?: string;
 
   @IsNotEmpty()
   @IsString()

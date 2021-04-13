@@ -43,7 +43,7 @@ export class AuthService {
     const { username, password } = signinDto;
     const filter = { username, verified: true };
 
-    const user: any = await this.userModel.findOne(filter);
+    const user: any = await this.userModel.findOne(filter).select('+password +verified');
 
     /**
      //? it must refactor and move to a separate method like: 'validateUserInfo' .
@@ -57,6 +57,10 @@ export class AuthService {
   //! SIGNUP NEW USER
   async signup(signupDto: SignupDto): Promise<{ verifyToken: number }> {
     const { username, password, fullName, phoneNumber } = signupDto;
+
+    //! check username or phoneNumber entered to be unique
+    await this.checkUserPreExistence(signupDto);
+
     const filter = { username, verified: true };
     /**
      //? it must refactor and move to a factory service
@@ -299,5 +303,16 @@ export class AuthService {
   //! GENERATE 6-DIGIT RANDOM NUMBER
   private generateRandomToken(): number {
     return Math.floor(100000 + Math.random() * 900000);
+  }
+
+  private async checkUserPreExistence(signupDto: SignupDto) {
+    const { username, phoneNumber } = signupDto;
+
+    const user = await this.userModel.findOne({ $or: [{ username }, { phoneNumber }] });
+
+    if (user)
+      throw new BadRequestException(
+        'the entered username or phone number already exists ',
+      );
   }
 }

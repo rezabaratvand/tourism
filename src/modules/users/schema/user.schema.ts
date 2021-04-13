@@ -2,6 +2,7 @@ import { Document } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { NextFunction } from 'express';
+import rolesConst from '../constants/roles.const';
 export type UserDocument = User & Document;
 
 @Schema({ versionKey: false, timestamps: true })
@@ -9,7 +10,7 @@ export class User {
   @Prop({ type: String, minlength: 5, maxlength: 256, trim: true, required: true })
   username: string;
 
-  @Prop({ type: String, minlength: 8, maxlength: 512, required: true })
+  @Prop({ type: String, minlength: 8, maxlength: 512, required: true, select: false })
   password: string;
 
   @Prop({ type: String, minlength: 2, maxlength: 256, trim: true, required: true })
@@ -18,7 +19,16 @@ export class User {
   @Prop({ type: String, length: 11, required: true })
   phoneNumber: string;
 
-  @Prop({ type: Boolean, default: false })
+  @Prop({ type: String, maxlength: 512, required: true })
+  email: string;
+
+  @Prop({ type: String })
+  avatar?: string;
+
+  @Prop({ type: String, enum: Object.values(rolesConst), default: rolesConst.USER })
+  role?: string;
+
+  @Prop({ type: Boolean, default: false, select: false })
   verified?: boolean;
 
   @Prop({ type: Number, length: 6 })

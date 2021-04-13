@@ -6,62 +6,73 @@ import {
   Put,
   Param,
   Delete,
-  HttpException,
-  HttpStatus,
-  UseFilters,
-  ForbiddenException,
-  Query,
-  ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { CustomForbiddenException } from 'src/exception/custom-forbidden.exception';
-import { HttpExceptionFilter } from 'src/exception/exception-filter.exception';
-import { MongoIdDto } from 'src/common/dto/mongoId.dto';
-import { ApiTags } from '@nestjs/swagger';
 
-// controller leven exception filter
-// @UseFilters(HttpExceptionFilter)
+import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiConsumes,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { uploadSingleFile } from 'src/utils/upload-file.util';
+import { UserDocument } from './schema/user.schema';
+
 @ApiTags('users')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @ApiOperation({ summary: 'create new user' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(uploadSingleFile('avatar', 'uploads/avatars'))
+  async create(
+    @Body() createUserDto: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    return await this.usersService.create(createUserDto, file);
   }
-  // method leven filters
-  // @UseFilters(HttpExceptionFilter)
-  @Get()
-  findAll() {
-    // throw new CustomForbiddenException();
-    // throw new ForbiddenException();
-    // console.log(id);
 
-    return this.usersService.findAll();
+  @Get()
+  @ApiOperation({ summary: 'get all users' })
+  async findAll(): Promise<UserDocument[]> {
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param() mongoId: MongoIdDto) {
-    return this.usersService.findOne(mongoId);
+  @ApiParam({ name: 'id' })
+  @ApiOperation({ summary: 'get a user by id' })
+  async findOne(@Param() mongoId: MongoIdDto): Promise<UserDocument> {
+    return await this.usersService.findOne(mongoId);
   }
 
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @Patch(':id')
+  @ApiParam({ name: 'id' })
+  @ApiOperation({ summary: 'update user by id' })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(uploadSingleFile('avatar', 'uploads/avatars'))
+  async update(
+    @Param() mongoId: MongoIdDto,
+    @Body() updateUserDto: UpdateUserDto,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    return this.usersService.update(mongoId, updateUserDto, file);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    // return this.usersService.remove(+id);
-    // throw new HttpException(
-    //   {
-    //     status: HttpStatus.FORBIDDEN,
-    //     error: 'this route is not public',
-    //   },
-    //   HttpStatus.FORBIDDEN,
-    // );
+  @ApiParam({ name: 'id' })
+  @ApiOperation({ summary: 'delete user by id' })
+  async remove(@Param() mongoId: MongoIdDto): Promise<string> {
+    return await this.usersService.remove(mongoId);
   }
 }

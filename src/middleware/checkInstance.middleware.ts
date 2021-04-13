@@ -1,1 +1,0 @@
-const getAge = params => {};
