@@ -8,6 +8,7 @@ import {
   Patch,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -21,6 +22,7 @@ import { ToursService } from './tours.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
 import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
 
 @ApiTags('tours')
 @ApiBearerAuth()
@@ -40,8 +42,8 @@ export class ToursController {
   @ApiOperation({ summary: 'get all tours' })
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
-  async findAll() {
-    return await this.toursService.findAll();
+  async findAll(@Query() filterQueryDto: FilterQueryDto) {
+    return await this.toursService.findAll(filterQueryDto);
   }
 
   @Get(':id')

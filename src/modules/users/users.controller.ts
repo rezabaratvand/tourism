@@ -9,6 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
+  Query,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -25,6 +26,7 @@ import {
 } from '@nestjs/swagger';
 import { uploadSingleFile } from 'src/utils/upload-file.util';
 import { UserDocument } from './schema/user.schema';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -45,8 +47,8 @@ export class UsersController {
 
   @Get()
   @ApiOperation({ summary: 'get all users' })
-  async findAll(): Promise<UserDocument[]> {
-    return await this.usersService.findAll();
+  async findAll(@Query() filterQueryDto: FilterQueryDto): Promise<UserDocument[]> {
+    return await this.usersService.findAll(filterQueryDto);
   }
 
   @Get(':id')

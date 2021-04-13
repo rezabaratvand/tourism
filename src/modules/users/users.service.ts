@@ -1,14 +1,19 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
 import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import { HelperService } from '../helper/helper.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private readonly userModel: Model<UserDocument>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
+    private readonly helperService: HelperService,
+  ) {}
   async create(createUserDto: CreateUserDto, file: Express.Multer.File): Promise<string> {
     // check the username and phone number entered to be unique
     await this.checkUserPreExistence(createUserDto);
@@ -22,8 +27,8 @@ export class UsersService {
     return 'user created successfully';
   }
 
-  async findAll(): Promise<UserDocument[]> {
-    return await this.userModel.find();
+  async findAll(filterQueryDto: FilterQueryDto): Promise<UserDocument[]> {
+    return await this.helperService.findAll(this.userModel, filterQueryDto);
   }
 
   async findOne(mongoIdDto: MongoIdDto): Promise<UserDocument> {

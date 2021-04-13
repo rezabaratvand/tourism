@@ -11,6 +11,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '../config/config.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { DataGeneratorModule } from './modules/data-generator/data-generator.module';
+import { HelperModule } from './modules/helper/helper.module';
+import * as paginatePlugin from 'mongoose-paginate-v2';
 
 @Module({
   imports: [
@@ -22,6 +24,10 @@ import { DataGeneratorModule } from './modules/data-generator/data-generator.mod
         connectionName: 'tourism',
         useCreateIndex: true,
         useNewUrlParser: true,
+        connectionFactory: connection => {
+          connection.plugin(paginatePlugin);
+          return connection;
+        },
       }),
     }),
     // throttler module
@@ -33,6 +39,7 @@ import { DataGeneratorModule } from './modules/data-generator/data-generator.mod
     }),
     AuthModule,
     DataGeneratorModule,
+    HelperModule,
     // call register method on config module
     // ConfigModule.register({ folder: './config' }),
   ],
@@ -44,12 +51,12 @@ import { DataGeneratorModule } from './modules/data-generator/data-generator.mod
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
     },
-    // // throttler binding
+    // throttler binding
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
     },
-    // set jwt guard as global
+    // set jwt guard globally
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,

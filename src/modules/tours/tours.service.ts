@@ -1,7 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
 import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import { HelperService } from '../helper/helper.service';
 import { CreateTourDto } from './dto/create-tour.dto';
 import { UpdateTourDto } from './dto/update-tour.dto';
 import { Tour, TourDocument } from './schema/tour.schema';
@@ -10,6 +12,7 @@ import { Tour, TourDocument } from './schema/tour.schema';
 export class ToursService {
   constructor(
     @InjectModel(Tour.name) private readonly tourModel: Model<TourDocument>,
+    private readonly helperService: HelperService,
   ) {}
 
   async create(createTourDto: CreateTourDto): Promise<string> {
@@ -18,8 +21,8 @@ export class ToursService {
     return 'tour created successfully';
   }
 
-  async findAll(): Promise<TourDocument[]> {
-    return await this.tourModel.find();
+  async findAll(filterQueryDto: FilterQueryDto): Promise<TourDocument[]> {
+    return await this.helperService.findAll(this.tourModel, filterQueryDto);
   }
 
   async findOne(mongoIdDto: MongoIdDto): Promise<TourDocument> {
@@ -30,10 +33,7 @@ export class ToursService {
     return tour;
   }
 
-  async update(
-    mongoIdDto: MongoIdDto,
-    updateTourDto: UpdateTourDto,
-  ): Promise<string> {
+  async update(mongoIdDto: MongoIdDto, updateTourDto: UpdateTourDto): Promise<string> {
     const tour = await this.findOne(mongoIdDto);
 
     await tour.updateOne(updateTourDto);
