@@ -1,34 +1,30 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Query } from '@nestjs/common';
+import { GetUser } from 'src/common/decorators/get-user.decorator';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
+import { MongoIdDto } from 'src/common/dto/mongoId.dto';
+import { UserDocument } from '../users/schema/user.schema';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
 
 @Controller('bookings')
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Post()
-  create(@Body() createBookingDto: CreateBookingDto) {
-    return this.bookingsService.create(createBookingDto);
+  async create(
+    @Body() createBookingDto: CreateBookingDto,
+    @GetUser('id') userId: UserDocument,
+  ): Promise<string> {
+    return await this.bookingsService.create(createBookingDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.bookingsService.findAll();
+  async findAll(@Query() filterQueryDto: FilterQueryDto) {
+    return await this.bookingsService.findAll(filterQueryDto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.bookingsService.findOne(+id);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-    return this.bookingsService.update(+id, updateBookingDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.bookingsService.remove(+id);
+  async findOne(@Param() mongoIdDto: MongoIdDto) {
+    return await this.bookingsService.findOne(mongoIdDto.id);
   }
 }

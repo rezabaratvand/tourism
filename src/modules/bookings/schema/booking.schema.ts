@@ -17,9 +17,6 @@ export class Booking {
 
   @Prop({ type: Number, required: true })
   price: number;
-
-  @Prop({ type: Boolean, default: true })
-  paid: boolean;
 }
 
 export const BookingSchema = SchemaFactory.createForClass(Booking);

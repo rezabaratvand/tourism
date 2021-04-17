@@ -1,26 +1,41 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { FilterQueryDto } from 'src/common/dto/filter-query.dto';
+import { HelperService } from '../helper/helper.service';
+import { UserDocument } from '../users/schema/user.schema';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
+import { Booking, BookingDocument } from './schema/booking.schema';
 
 @Injectable()
 export class BookingsService {
-  create(createBookingDto: CreateBookingDto) {
-    return 'This action adds a new booking';
+  constructor(
+    @InjectModel(Booking.name) private readonly bookingModel: Model<BookingDocument>,
+    private readonly helperService: HelperService,
+  ) {}
+  async create(
+    createBookingDto: CreateBookingDto,
+    userId: UserDocument,
+  ): Promise<string> {
+    const { tour, price } = createBookingDto;
+
+    await this.bookingModel.create({ user: userId, tour, price });
+
+    return 'booking record created successfully';
   }
 
-  findAll() {
-    return `This action returns all bookings`;
+  async findAll(filterQueryDto: FilterQueryDto): Promise<BookingDocument[]> {
+    return await this.helperService.findAll(this.bookingModel, filterQueryDto, [
+      'tour',
+      'user',
+    ]);
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} booking`;
-  }
+  async findOne(id: string): Promise<BookingDocument> {
+    const booking = await this.bookingModel.findById(id);
 
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
-  }
+    if (booking) throw new NotFoundException('booking record not found');
 
-  remove(id: number) {
-    return `This action removes a #${id} booking`;
+    return booking;
   }
 }
