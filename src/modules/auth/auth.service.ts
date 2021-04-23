@@ -12,7 +12,7 @@ import { User, UserDocument } from '../users/schema/user.schema';
 import { JwtPayload } from './interfaces/jwt-payload.interfaces';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/signup.dto';
-import globalConst from 'src/common/constants/global.const';
+import globalConst from '../../common/constants/global.const';
 import { VerifyUserDto } from './dto/verify-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshToken, RefreshTokenDocument } from './schema/refresh-token.schema';

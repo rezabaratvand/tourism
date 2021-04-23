@@ -6,5 +6,6 @@ export default {
   password: '12345678',
   phoneNumber: '09123456789',
   fullName: 'superadmin',
+  email: 'admin@mail.com',
   verified: true,
 };

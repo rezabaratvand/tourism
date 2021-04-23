@@ -22,7 +22,7 @@ async function bootstrap() {
   // use global pipe
   app.useGlobalPipes(
     new ValidationPipe({
-      disableErrorMessages: process.env.NODE_ENV == 'development' ? true : false,
+      disableErrorMessages: process.env.NODE_ENV == 'production' ? false : true,
     }),
   );
 
@@ -37,7 +37,7 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-doc', app, document);
 
-  // apply compression middleware
+  //! apply compression middleware
   app.use(compression());
 
   const port = process.env.PORT || 3000;

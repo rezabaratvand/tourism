@@ -8,7 +8,6 @@ import { ToursModule } from './modules/tours/tours.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { AuthModule } from './modules/auth/auth.module';
-import { ConfigModule } from '../config/config.module';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { DataTransformInterceptor } from './interceptors/data-transformer.interceptor';
 import { DataGeneratorModule } from './modules/data-generator/data-generator.module';
@@ -16,15 +15,18 @@ import { HelperModule } from './modules/helper/helper.module';
 import { CommentsModule } from './modules/comments/comments.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import * as paginatePlugin from 'mongoose-paginate-v2';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import * as Joi from 'joi';
+import databaseConfig from 'config/database.config';
+import authConfig from 'config/auth.config';
 
 @Module({
   imports: [
-    // UsersModule,
-    ToursModule,
+    //! mongoose configuration
     MongooseModule.forRootAsync({
-      useFactory: async () => ({
-        uri: 'mongodb://localhost:27017/tourism',
-        connectionName: 'tourism',
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('database.uri'),
+        connectionName: configService.get<string>('database.connectionName'),
         useCreateIndex: true,
         useNewUrlParser: true,
         connectionFactory: connection => {
@@ -32,21 +34,43 @@ import * as paginatePlugin from 'mongoose-paginate-v2';
           return connection;
         },
       }),
+      inject: [ConfigService],
     }),
-    // throttler module
+    //! throttler module config
     ThrottlerModule.forRootAsync({
       useFactory: () => ({
         ttl: 60,
         limit: 30,
       }),
     }),
+    //! config module configuration
+    ConfigModule.forRoot({
+      isGlobal: true,
+      cache: true,
+      expandVariables: true,
+      load: [databaseConfig, authConfig],
+      validationSchema: Joi.object({
+        PORT: Joi.number().default(3000),
+        JWT_EXPIRATION: Joi.alternatives().try(Joi.string(), Joi.number()),
+        JWT_SECRET: Joi.string().required(),
+        DATABASE_PASSWORD: Joi.string().required(),
+        MONGODB_URI: Joi.string().required(),
+        NODE_ENV: Joi.string()
+          .valid('development', 'production', 'test', 'provision')
+          .default('development'),
+      }),
+      validationOptions: {
+        // allowUnknown: false,
+        abortEarly: true,
+      },
+    }),
+    ToursModule,
+    UsersModule,
     AuthModule,
-    DataGeneratorModule,
     HelperModule,
     CommentsModule,
     BookingsModule,
-    // call register method on config module
-    // ConfigModule.register({ folder: './config' }),
+    DataGeneratorModule,
   ],
   controllers: [AppController],
   providers: [
